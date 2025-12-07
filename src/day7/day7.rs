@@ -59,6 +59,62 @@ pub fn part1() {
     println!("number of splits: {}", splits);
 }
 
+pub fn part1_alternate() {
+    let contents = fs::read_to_string("day7.txt").expect("A FILE!");
+
+    let content_fungus: Vec<Vec<char>> = contents.lines().map(|s| s.chars().collect()).collect();
+
+    let splitters: Vec<_> = contents
+        .lines()
+        .into_iter()
+        .flat_map(|line| {
+            line.chars()
+                .enumerate()
+                .filter(|(_, c)| *c == '^')
+                .map(move |(col_idx, _)| col_idx)
+        })
+        .collect();
+
+    let starting_pos = content_fungus
+        .get(0)
+        .unwrap()
+        .iter()
+        .position(|&c| c == 'S')
+        .unwrap();
+
+    println!("{starting_pos}");
+
+    let mut counters: HashSet<usize> = HashSet::new();
+    
+    counters.insert(starting_pos);
+
+    let mut my_fungus: bool = false;
+
+    let mut bungus: usize = 0;
+
+    for splitter in splitters{
+
+        if counters.contains(&splitter){
+
+            counters.insert(splitter+1);
+            counters.insert(splitter-1);
+
+            bungus +=1;
+
+            my_fungus = true;
+        }
+
+        if my_fungus{
+            counters.remove(&splitter);
+            my_fungus = false;
+        }
+
+    }
+
+    println!("The funguses are {}", bungus);
+
+}
+
 pub fn part2() {
     let contents = fs::read_to_string("day7.txt").expect("A FILE!");
 
